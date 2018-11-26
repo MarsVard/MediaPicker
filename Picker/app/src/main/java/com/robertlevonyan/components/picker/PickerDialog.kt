@@ -333,6 +333,18 @@ class PickerDialog : BottomSheetDialogFragment() {
                                 openFilePicker()
                             }
                         }
+                        ItemModel.ITEM_FILES_FILTERED -> {
+                            if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    != PackageManager.PERMISSION_GRANTED
+                                    || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(activity!!,
+                                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                                        REQUEST_PERMISSION_FILE)
+                            } else {
+                                openFilePicker(item.fileTypeFilter)
+                            }
+                        }
                     }
                 }
         )
@@ -454,6 +466,13 @@ class PickerDialog : BottomSheetDialogFragment() {
     private fun openFilePicker() {
         val pickFile = Intent(Intent.ACTION_GET_CONTENT)
         pickFile.type = "*/*"
+
+        startActivityForResult(pickFile, REQUEST_PICK_FILE)
+    }
+
+    private fun openFilePicker(typeFilter:String) {
+        val pickFile = Intent(Intent.ACTION_GET_CONTENT)
+        pickFile.type = typeFilter
 
         startActivityForResult(pickFile, REQUEST_PICK_FILE)
     }
