@@ -474,27 +474,8 @@ class PickerDialog : BottomSheetDialogFragment() {
     private fun takePhoto() {
         val uri = this.uri ?: return
 
-        var bitmap: Bitmap
-        try {
-            val options = BitmapFactory.Options()
-            options.inJustDecodeBounds = false
-            options.inPreferredConfig = Bitmap.Config.RGB_565
-            options.inDither = true
-            bitmap = BitmapFactory.decodeFile(uri.realPath(context!!).path, options)
-
-            val exif = ExifInterface(uri.realPath(context!!).path)
-
-            when (exif.getAttribute(ExifInterface.TAG_ORIENTATION)) {
-                "6" -> bitmap = bitmap rotate 90
-                "8" -> bitmap = bitmap rotate 270
-                "3" -> bitmap = bitmap rotate 180
-            }
-
-            if (onPickerCloseListener != null) {
-                onPickerCloseListener?.onPickerClosed(ItemModel.ITEM_CAMERA, bitmap.toUri(context!!, fileName))
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
+        if (onPickerCloseListener != null) {
+            onPickerCloseListener?.onPickerClosed(ItemModel.ITEM_CAMERA, uri)
         }
 
         dismiss()
